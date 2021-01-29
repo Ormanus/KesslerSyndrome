@@ -128,7 +128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ed68422f3358d749a58860568528fdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Earth: {fileID: 0}
+  Velocity: {x: 0, y: 0}
+  SimulationParticle: {fileID: 8703436863689963136, guid: c01f01e27a3f1f64083a164c7b4cd50b,
+    type: 3}
 --- !u!50 &-5951792414780146491
 Rigidbody2D:
   serializedVersion: 4

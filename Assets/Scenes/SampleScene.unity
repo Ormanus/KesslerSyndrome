@@ -219,6 +219,16 @@ PrefabInstance:
       propertyPath: Earth
       value: 
       objectReference: {fileID: 1904285979}
+    - target: {fileID: 1266558302248063757, guid: ba799c3eb2d70eb4e9e9581020b7aa32,
+        type: 3}
+      propertyPath: Velocity.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266558302248063757, guid: ba799c3eb2d70eb4e9e9581020b7aa32,
+        type: 3}
+      propertyPath: Velocity.y
+      value: -2.5
+      objectReference: {fileID: 0}
     - target: {fileID: 1873266683670216666, guid: ba799c3eb2d70eb4e9e9581020b7aa32,
         type: 3}
       propertyPath: m_RootOrder
