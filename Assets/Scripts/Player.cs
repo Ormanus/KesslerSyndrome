@@ -24,9 +24,9 @@ public class Player
     }
 
 
-    public int SatellitesCount
+    public int SatellitesCount()
     {
-        get { return satellites_.Count; }
+        return satellites_.Count;
     }
 
     const int START_MONEY = 420;
@@ -57,6 +57,32 @@ public class Player
     public void RemoveSatellite(GameObject gameObject)
     {
         satellites_.Remove(gameObject);
+    }
+
+    public GameObject ClosestSatellite(Vector2 mousePos)
+    {
+        if (satellites_.Count == 0)
+        {
+            return null;
+        }
+        Vector3 pos = satellites_[0].transform.position;
+        float dx = mousePos.x - pos.x;
+        float dy = mousePos.y - pos.y;
+        float closestDist = dx * dx + dy * dy;
+        GameObject closestSatellite = satellites_[0];
+        for (int i = 1; i < satellites_.Count; i++)
+        {
+            pos = satellites_[i].transform.position; 
+            dx = mousePos.x - pos.x;
+            dy = mousePos.y - pos.y;
+            float dist = dx * dx + dy * dy;
+            if (dist < closestDist)
+            { 
+                closestDist = dist;
+                closestSatellite = satellites_[i];
+            }
+        }
+        return closestSatellite;
     }
 
     public Player(string name, Color playerColor, Text display)
