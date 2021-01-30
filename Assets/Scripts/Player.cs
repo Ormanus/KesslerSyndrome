@@ -50,10 +50,11 @@ public class Player
 
     public void AddSatellite(GameObject gameObject)
     {
+        gameObject.GetComponent<Satellite>().player = this;
         satellites_.Add(gameObject);
     }
 
-    public void RemovveSatellite(GameObject gameObject)
+    public void RemoveSatellite(GameObject gameObject)
     {
         satellites_.Remove(gameObject);
     }
