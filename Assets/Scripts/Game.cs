@@ -8,6 +8,16 @@ public class Game : MonoBehaviour
 {
     public GameObject SatellitePrefab;
     private List<Player> players_;
+    private int currentPlayer_;
+    private int satelliteTimer;
+    const int SATELLITE_TIMER_LENGTH = 150; //3 seconds;
+
+    private static bool paused_;
+    public static bool Paused
+    {
+        get { return paused_; }
+        set { paused_ = value; }
+    }
 
     private void CreateSatellite(Vector3 position, Vector2 velocity, Player player)
     {
@@ -21,6 +31,8 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Paused = false;
+        currentPlayer_ = 0;
         players_ = new List<Player>();
         players_.Add(new Player("Ice Wallow", Color.red));
         players_.Add(new Player("Sprinkler 777777777777", Color.green));
@@ -30,8 +42,19 @@ public class Game : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        if (Paused)
+        {
+            return;
+        }
+        else
+        {
+            foreach (Player player in players_)
+            {
+                player.MonetizeSatellites();
+            }
+            satelliteTimer++;
+        }
     }
 }

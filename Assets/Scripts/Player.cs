@@ -27,6 +27,11 @@ public class Player
 
     const int START_MONEY = 420;
 
+    public void MonetizeSatellites()
+    {
+
+    }
+
     public void AddSatellite(GameObject gameObject)
     {
         satellites_.Add(gameObject);
