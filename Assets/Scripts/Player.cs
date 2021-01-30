@@ -4,32 +4,35 @@ using UnityEngine;
 
 public class Player
 {
-    private string name_;
-    private Color playerColor_;
-    private int money_;
     private List<GameObject> satellites_;
+    private Transform earth;
 
-    public string Name
+    public string Name { get; set; }
+    public Color PlayerColor { get; set; }
+    public int Money { get; set; }
+
+    public int SatellitesCount
     {
-        get { return name_; }
-        set { name_ = value; }
-    }
-    public Color PlayerColor
-    {
-        get { return playerColor_; }
-        set { playerColor_ = value; }
-    }
-    public int Money
-    {
-        get { return money_; }
-        set { money_ = value; }
+        get { return satellites_.Count; }
     }
 
     const int START_MONEY = 420;
 
     public void MonetizeSatellites()
     {
+        foreach (var satellite in satellites_)
+        {
+            Vector2 delta0 = satellite.transform.position - earth.position;
+            float angle0 = Mathf.Atan2(delta0.y, delta0.x);
 
+            foreach (City city in City.AllCities)
+            {
+                if (Mathf.Abs(city.Angle - angle0) < 0.1f)
+                {
+                    Money++;
+                }
+            }
+        }
     }
 
     public void AddSatellite(GameObject gameObject)
@@ -42,16 +45,12 @@ public class Player
         satellites_.Remove(gameObject);
     }
 
-    public int SatellitesCount()
-    {
-        return satellites_.Count;
-    }
-
     public Player(string name, Color playerColor)
     {
         name = Name;
         PlayerColor = playerColor;
         Money = START_MONEY;
         satellites_ = new List<GameObject>();
+        earth = GameObject.Find("Earth").transform;
     }
 }
