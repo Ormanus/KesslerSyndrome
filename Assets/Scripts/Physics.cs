@@ -42,11 +42,11 @@ public class Physics : MonoBehaviour
         rb.velocity += CalculateMovement(transform.position);
         Vector3 simulatedPosition = transform.position;
         Vector2 simulatedSpeed = rb.velocity;
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 500; i++)
         {
             simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
             simulatedSpeed += CalculateMovement(simulatedPosition);
-            if (i % 10 == 0)
+            if (i % 20 == 0)
             {
                 Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
             }
