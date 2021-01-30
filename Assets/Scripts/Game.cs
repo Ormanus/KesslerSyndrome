@@ -48,13 +48,13 @@ public class Game : MonoBehaviour
         }
     }
 
-    private enum ActionType
+    public enum ActionType
     {
         None,
         CreateSatellite,
         MoveSatellite
     }
-    private ActionType currentAction = ActionType.None;
+    public ActionType currentAction = ActionType.None;
 
     private GameObject CreateSatellite(Vector3 position, Vector2 velocity, Player player)
     {
