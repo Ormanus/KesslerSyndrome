@@ -81,6 +81,10 @@ public class Game : MonoBehaviour
     private void TaskNext()
     {
         Paused = false;
+
+        satelliteGhost_.GetComponent<CapsuleCollider2D>().isTrigger = false;
+        placingSatellite_ = false;
+        satelliteGhost_ = null;
     }
 
     private void TaskCreate()
@@ -91,10 +95,11 @@ public class Game : MonoBehaviour
         }
         else if (satelliteGhost_ != null)
         {
-            satelliteGhost_.GetComponent<Physics>().Velocity = new Vector3();
+
         }
         else
         {
+            ButtonCreate.enabled = false;
             placingSatellite_ = true;
             satelliteGhost_ = CreateSatellite(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f), players_[currentPlayer_]);
         }
@@ -109,19 +114,27 @@ public class Game : MonoBehaviour
         {
             currentPlayer_ -= players_.Count;
         }
-        placingSatellite_ = false;
-        satelliteGhost_ = null;
         InfoText.text = players_[currentPlayer_].Name + "'s turn!";
+        ButtonCreate.enabled = true;
     }
 
     private bool mouseDown_ = false;
+
+    public static bool IsPointerOverUIObject()
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
+    }
 
     void mouseClicked()
     {
         if (satelliteGhost_ != null && !mouseDown_)
         {
 
-            if (EventSystem.current.currentSelectedGameObject == null)
+            if (!IsPointerOverUIObject())
             {
                 Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
