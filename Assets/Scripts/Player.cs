@@ -49,7 +49,7 @@ public class Player
 
     public Player(string name, Color playerColor)
     {
-        name = Name;
+        Name = name;
         PlayerColor = playerColor;
         Money = START_MONEY;
         satellites_ = new List<GameObject>();

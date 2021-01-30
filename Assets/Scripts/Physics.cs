@@ -11,15 +11,14 @@ public class Physics : MonoBehaviour
     public Transform SimulationParticle;
     private GameObject earth_;
     private Rigidbody2D rb_;
-    private bool started_ = false;
-    const double GM = 1.2; // Gravity constant * mass of earth
+    private bool placed_ = false;
+    const double GM = 4.0; // Gravity constant * mass of earth
     // Start is called before the first frame update
     void Start()
     {
         rb_ = GetComponent<Rigidbody2D>();
         rb_.velocity = Velocity;
         earth_ = GameObject.Find("Earth");
-        started_ = true;
     }
 
     private Vector2 CalculateMovement(Vector3 pos)
@@ -35,21 +34,26 @@ public class Physics : MonoBehaviour
     // FixedUpdate is called once per frame
     void FixedUpdate()
     {
-        if (!started_)
+        if (Game.Paused)
         {
-            return;
-        }
-        rb_.velocity += CalculateMovement(transform.position);
-        Vector3 simulatedPosition = transform.position;
-        Vector2 simulatedSpeed = rb_.velocity;
-        for (int i = 0; i < 500; i++)
-        {
-            simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
-            simulatedSpeed += CalculateMovement(simulatedPosition);
-            if (i % 20 == 0)
+            rb_.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 simulatedPosition = transform.position;
+            Vector2 simulatedSpeed = Velocity;
+            for (int i = 0; i < 500; i++)
             {
-                Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
+                simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
+                simulatedSpeed += CalculateMovement(simulatedPosition);
+                if (i % 20 == 0)
+                {
+                    Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
+                }
             }
         }
+        else
+        {
+            rb_.velocity = Velocity + CalculateMovement(transform.position);
+            Velocity = rb_.velocity;
+        }
+
     }
 }
