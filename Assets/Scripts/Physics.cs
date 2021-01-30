@@ -8,14 +8,11 @@ public class Physics : MonoBehaviour
 
     private GameObject earth_;
     private Rigidbody2D rb_;
-    private bool placed_ = false;
-    public bool Placed
-    {
-        get { return placed_; }
-        set { placed_ = value; }
-    }
+    public bool Placed { get; set; } = true;
     const double GM = 4.0; // Gravity constant * mass of earth
     Transform[] simulationParticles = null;
+
+    bool drawParticles = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +20,8 @@ public class Physics : MonoBehaviour
         rb_ = GetComponent<Rigidbody2D>();
         rb_.velocity = Velocity;
         earth_ = GameObject.Find("Earth");
+
+        drawParticles = GetComponent<Satellite>() != null;
     }
 
     private Vector2 CalculateMovement(Vector3 pos)
@@ -40,6 +39,7 @@ public class Physics : MonoBehaviour
     {
         if (Game.Paused)
         {
+            rb_.velocity = Vector2.zero;
             if (!Placed)
             {
                 Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -53,8 +53,7 @@ public class Physics : MonoBehaviour
         }
         else
         {
-
-
+            RemoveParticles();
             rb_.velocity = Velocity + CalculateMovement(transform.position);
             Velocity = rb_.velocity;
         }
@@ -68,7 +67,6 @@ public class Physics : MonoBehaviour
             {
                 if (simulationParticles[i] == null)
                 {
-                    Debug.LogWarning(i);
                     continue;
                 }
                 Destroy(simulationParticles[i].gameObject);
@@ -80,9 +78,12 @@ public class Physics : MonoBehaviour
 
     public void RecalculateParticles()
     {
+        if (!drawParticles)
+            return;
+
         RemoveParticles();
 
-        simulationParticles = new Transform[25];
+        simulationParticles = new Transform[50];
         rb_.velocity = new Vector3(0.0f, 0.0f, 0.0f);
         Vector3 simulatedPosition = transform.position;
         Vector2 simulatedSpeed = Velocity;
@@ -91,9 +92,11 @@ public class Physics : MonoBehaviour
         {
             simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
             simulatedSpeed += CalculateMovement(simulatedPosition);
-            if (i % 20 == 0)
+            if (i % 10 == 0)
             {
-                simulationParticles[index++] = Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
+                var obj = Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
+                obj.GetComponent<SimulationParticle>().Alpha = 1f - (i / 500f);
+                simulationParticles[index++] = obj;
             }
         }
     }

@@ -40,6 +40,7 @@ public class Game : MonoBehaviour
         Rigidbody2D rb = satellite.GetComponent<Rigidbody2D>();
         satellite.GetComponent<Physics>().Velocity = velocity;
         satellite.GetComponentInChildren<SpriteRenderer>().color = player.PlayerColor;
+        satellite.GetComponent<Physics>().Placed = true;
         player.AddSatellite(satellite);
         return satellite;
     }
@@ -119,6 +120,8 @@ public class Game : MonoBehaviour
             ButtonCreate.enabled = false;
             placingSatellite_ = true;
             satelliteGhost_ = CreateSatellite(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f), players_[currentPlayer_]);
+            satelliteGhost_.GetComponent<Physics>().Placed = false;
+            satelliteGhost_.GetComponent<Collider2D>().isTrigger = true;
             ShowButton(ButtonCancel);
             HideButton(ButtonNext);
             HideButton(ButtonCreate);

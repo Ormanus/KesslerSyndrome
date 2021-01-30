@@ -163,7 +163,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -183,8 +183,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShrapnelPrefabs:
   - {fileID: 8910427446607544044, guid: baa05a15fcca3be4ba3903c435853357, type: 3}
-  - {fileID: 8910427446607544044, guid: 6695e456983abfb4490ddd65f090eef3, type: 3}
-  - {fileID: 8910427446607544044, guid: 489eac1ca50addc429742d95188f7d55, type: 3}
-  - {fileID: 8910427446607544044, guid: 478872a4c636ca7488c39aea410a88e8, type: 3}
+  - {fileID: 8910427446607544044, guid: 87524faebe5539c4da51bbcbab3d65e0, type: 3}
+  - {fileID: 8910427446607544044, guid: d1447bb1129a43a4bb653bd57333264a, type: 3}
+  - {fileID: 8910427446607544044, guid: e8a4dad6bbb21f544b644989202c1baa, type: 3}
+  - {fileID: 8910427446607544044, guid: 5f174b972c2c0624cb179505c8e1c694, type: 3}
+  - {fileID: 8910427446607544044, guid: 9ef6ac4c2d73a984c8d10f3e24660fa4, type: 3}
   ExplosionPrefab: {fileID: 8910427446607544044, guid: e182dc43af081734ebb03a890059a043,
     type: 3}
