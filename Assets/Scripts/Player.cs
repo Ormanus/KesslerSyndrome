@@ -23,13 +23,16 @@ public class Player
         }
     }
 
+    public int armor = 1;
+    public int comms = 1;
+    public int thrust = 1;
 
     public int SatellitesCount
     {
         get { return satellites_.Count; }
     }
 
-    const int START_MONEY = 420;
+    const int START_MONEY = 420000;
 
     public void MonetizeSatellites()
     {
@@ -63,9 +66,9 @@ public class Player
     {
         Name = name;
         PlayerColor = playerColor;
+        moneyDisplay = display;
         Money = START_MONEY;
         satellites_ = new List<GameObject>();
         earth = GameObject.Find("Earth").transform;
-        moneyDisplay = display;
     }
 }

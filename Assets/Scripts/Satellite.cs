@@ -8,6 +8,10 @@ public class Satellite : MonoBehaviour
     public GameObject ExplosionPrefab;
     public Player player;
 
+    public int armor = 1;
+    public int comms = 1;
+    public float thrust = 1f;
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (GetInstanceID() > collision.transform.GetInstanceID())
