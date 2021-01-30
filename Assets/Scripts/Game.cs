@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,14 +8,17 @@ using UnityEngine.UI;
 public class Game : MonoBehaviour
 {
     public GameObject SatellitePrefab;
+    public GameObject CityPrefab;
     public Canvas ScoreCanvas;
     public Text InfoText;
     public Button ButtonNext;
+    public Text[] moneyDisplays;
 
     private List<Player> players_;
     private int currentPlayer_;
     private int satelliteTimer;
     const int SATELLITE_TIMER_LENGTH = 200; //4 seconds;
+    const float EARTH_RADIUS = 4.9f;
 
     private static bool paused_;
     public static bool Paused
@@ -34,6 +36,13 @@ public class Game : MonoBehaviour
         player.AddSatellite(satellite);
     }
 
+    private void CreateCity(Vector2 pos, int pop)
+    {
+        var obj = Instantiate(CityPrefab);
+        obj.transform.position = pos;
+        obj.GetComponent<City>().Population = pop;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,11 +50,24 @@ public class Game : MonoBehaviour
         satelliteTimer = 0;
         currentPlayer_ = -1;
         players_ = new List<Player>();
-        players_.Add(new Player("Ice Wallowcome", Color.red));
-        players_.Add(new Player("Sprinkler 777777777777", Color.green));
-        players_.Add(new Player("Fudge Eynah", Color.blue));
+        players_.Add(new Player("Ice Wallowcome", Color.red, moneyDisplays[0]));
+        players_.Add(new Player("Sprinkler 777777777777", Color.green, moneyDisplays[1]));
+        players_.Add(new Player("Fudge Eynah", Color.blue, moneyDisplays[2]));
         CreateSatellite(new Vector3(7.0f, 1.0f, 0.0f), new Vector2(0.0f, -5.0f), players_[0]);
         CreateSatellite(new Vector3(8.0f, -2.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
+
+        Transform earth = GameObject.Find("Earth")?.transform;
+        if (earth == null)
+            Debug.LogError("Earth not found!");
+
+        for (int i = 0; i < 10; i++)
+        {
+            float r = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+            Vector3 pos = new Vector3(Mathf.Cos(r), Mathf.Sin(r));
+
+            CreateCity(earth.position + pos * EARTH_RADIUS, UnityEngine.Random.Range(1000, 50000));
+        }
+
         ButtonNext.onClick.AddListener(TaskNext);
         Pause();
     }

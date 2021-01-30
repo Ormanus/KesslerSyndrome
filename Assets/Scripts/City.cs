@@ -10,7 +10,7 @@ public class City : MonoBehaviour
 
     public float Angle;
 
-    private void Awake()
+    private void Start()
     {
         Transform earth = GameObject.Find("Earth")?.transform;
         if (earth == null)
@@ -20,5 +20,7 @@ public class City : MonoBehaviour
 
         Vector2 delta = transform.position - earth.position;
         Angle = Mathf.Atan2(delta.y, delta.x);
+
+        transform.localEulerAngles = new Vector3(0f, 0f, Angle * Mathf.Rad2Deg - 90f);
     }
 }
