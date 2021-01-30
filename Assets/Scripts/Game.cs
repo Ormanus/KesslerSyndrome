@@ -15,14 +15,16 @@ public class Game : MonoBehaviour
     public Text InfoText;
     public Button ButtonNext;
     public Button ButtonCreate;
-    public Button ButtonCancel;
+    public Button ButtonCancelCreate;
+    public Button ButtonMove;
+    public Button ButtonCancelMove;
     public Text[] moneyDisplays;
 
     private List<Player> players_;
     private int currentPlayer_;
     private int satelliteTimer;
     private bool placingSatellite_ = false;
-    private GameObject satelliteGhost_ = null;
+    private GameObject handledSatellite_ = null;
 
     const int SATELLITE_TIMER_LENGTH = 200; //4 seconds;
     const float EARTH_RADIUS = 4.9f;
@@ -33,6 +35,14 @@ public class Game : MonoBehaviour
         get { return paused_; }
         set { paused_ = value; }
     }
+
+    private enum ActionType
+    {
+        None,
+        CreateSatellite,
+        MoveSatellite
+    }
+    private ActionType currentAction = ActionType.None;
 
     private GameObject CreateSatellite(Vector3 position, Vector2 velocity, Player player)
     {
@@ -85,8 +95,11 @@ public class Game : MonoBehaviour
 
         ButtonNext.onClick.AddListener(TaskNext);
         ButtonCreate.onClick.AddListener(TaskCreate);
-        ButtonCancel.onClick.AddListener(TaskCancel);
-        HideButton(ButtonCancel);
+        ButtonCancelCreate.onClick.AddListener(TaskCancelCreate);
+        ButtonMove.onClick.AddListener(TaskMove);
+        ButtonCancelMove.onClick.AddListener(TaskCancelMove);
+        HideButton(ButtonCancelCreate);
+        HideButton(ButtonCancelMove);
         Pause();
     }
 
@@ -94,15 +107,18 @@ public class Game : MonoBehaviour
     {
         Paused = false;
 
-        if (satelliteGhost_ != null)
+        if (handledSatellite_ != null)
         {
-            satelliteGhost_.GetComponent<CapsuleCollider2D>().isTrigger = false;
-            satelliteGhost_ = null;
+            handledSatellite_.GetComponent<CapsuleCollider2D>().isTrigger = false;
+            handledSatellite_ = null;
         }
         placingSatellite_ = false;
+        currentAction = ActionType.None;
         HideButton(ButtonCreate);
+        HideButton(ButtonMove);
         HideButton(ButtonNext);
-        HideButton(ButtonCancel);
+        HideButton(ButtonCancelCreate);
+        HideButton(ButtonCancelMove);
     }
 
     private void TaskCreate()
@@ -111,7 +127,7 @@ public class Game : MonoBehaviour
         {
 
         }
-        else if (satelliteGhost_ != null)
+        else if (handledSatellite_ != null)
         {
 
         }
@@ -119,16 +135,18 @@ public class Game : MonoBehaviour
         {
             ButtonCreate.enabled = false;
             placingSatellite_ = true;
-            satelliteGhost_ = CreateSatellite(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f), players_[currentPlayer_]);
-            satelliteGhost_.GetComponent<Physics>().Placed = false;
-            satelliteGhost_.GetComponent<Collider2D>().isTrigger = true;
-            ShowButton(ButtonCancel);
+            handledSatellite_ = CreateSatellite(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f), players_[currentPlayer_]);
+            handledSatellite_.GetComponent<Physics>().Placed = false;
+            handledSatellite_.GetComponent<Collider2D>().isTrigger = true;
+            ShowButton(ButtonCancelCreate);
             HideButton(ButtonNext);
             HideButton(ButtonCreate);
+            HideButton(ButtonMove);
+            currentAction = ActionType.CreateSatellite;
         }
     }
 
-    private void TaskCancel()
+    private void TaskCancelCreate()
     {
         if (!Paused)
         {
@@ -138,15 +156,61 @@ public class Game : MonoBehaviour
         {
             ButtonCreate.enabled = true;
             placingSatellite_ = false;
-            if (satelliteGhost_ != null)
+            if (handledSatellite_ != null)
             {
-                players_[currentPlayer_].RemoveSatellite(satelliteGhost_);
-                Destroy(satelliteGhost_);
-                satelliteGhost_ = null;
+                players_[currentPlayer_].RemoveSatellite(handledSatellite_);
+                Destroy(handledSatellite_);
+                handledSatellite_ = null;
             }
             ShowButton(ButtonNext);
             ShowButton(ButtonCreate);
-            HideButton(ButtonCancel);
+            ShowButton(ButtonMove);
+            HideButton(ButtonCancelCreate);
+            HideButton(ButtonCancelMove);
+            currentAction = ActionType.None;
+        }
+    }
+
+    private void TaskMove()
+    {
+        if (!Paused)
+        {
+
+        }
+        if (players_[currentPlayer_].SatellitesCount() == 0)
+        {
+
+        }
+        else
+        {
+
+            ShowButton(ButtonCancelMove);
+            HideButton(ButtonNext);
+            HideButton(ButtonCreate);
+            HideButton(ButtonMove);
+            currentAction = ActionType.MoveSatellite;
+        }
+    }
+
+    private void TaskCancelMove()
+    {
+        if (!Paused)
+        {
+
+        }
+        else
+        {
+            if (handledSatellite_ != null)
+            {
+                handledSatellite_.GetComponent<Physics>().Velocity = originalVelocity_;
+                handledSatellite_.GetComponent<Physics>().RecalculateParticles();
+                handledSatellite_ = null;
+            }
+            ShowButton(ButtonNext);
+            ShowButton(ButtonCreate);
+            ShowButton(ButtonMove);
+            HideButton(ButtonCancelMove);
+            currentAction = ActionType.None;
         }
     }
 
@@ -173,10 +237,12 @@ public class Game : MonoBehaviour
         InfoText.text = players_[currentPlayer_].Name + "'s turn!";
         ButtonCreate.enabled = true;
         placingSatellite_ = false;
-        satelliteGhost_ = null;
+        handledSatellite_ = null;
         ShowButton(ButtonNext);
         ShowButton(ButtonCreate);
-        HideButton(ButtonCancel);
+        HideButton(ButtonCancelCreate);
+        ShowButton(ButtonMove);
+        HideButton(ButtonCancelMove);
     }
 
     void Unpause()
@@ -195,31 +261,80 @@ public class Game : MonoBehaviour
         return results.Count > 0;
     }
 
+    Vector2 originalVelocity_ = Vector2.zero;
+    bool givingImpulse_ = false;
+
     void mouseClicked()
     {
-        if (satelliteGhost_ != null && !mouseDown_)
+        switch (currentAction)
         {
+            case ActionType.CreateSatellite:
+                if (handledSatellite_ != null && !mouseDown_)
+                {
 
-            if (!IsPointerOverUIObject())
-            {
+                    if (!IsPointerOverUIObject())
+                    {
+                        Vector2 screenPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                        Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
+                        handledSatellite_.transform.position = new Vector3(worldPos.x, worldPos.y, 0.0f);
+                        placingSatellite_ = false;
+                        handledSatellite_.GetComponent<Physics>().Placed = true;
+                        ShowButton(ButtonNext);
+                    }
+                }
+                if (handledSatellite_ != null && mouseDown_ && !placingSatellite_)
+                {
+                    Vector2 screenPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                    Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
+                    float dx = handledSatellite_.transform.position.x - worldPos.x;
+                    float dy = handledSatellite_.transform.position.y - worldPos.y;
+
+                    handledSatellite_.GetComponent<Physics>().Velocity = new Vector2(dx, dy);
+                    handledSatellite_.GetComponent<Physics>().RecalculateParticles();
+                }
+                break;
+            case ActionType.MoveSatellite:
                 Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
                 Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-                satelliteGhost_.transform.position = new Vector3(worldPosition.x, worldPosition.y, 0.0f);
-                placingSatellite_ = false;
-                satelliteGhost_.GetComponent<Physics>().Placed = true;
-                ShowButton(ButtonNext);
-            }
-        }
-        if (satelliteGhost_ != null && mouseDown_ && !placingSatellite_)
-        {
-            Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-            float dx = satelliteGhost_.transform.position.x - worldPosition.x;
-            float dy = satelliteGhost_.transform.position.y - worldPosition.y;
+                if (!mouseDown_)
+                {
+                    // reset potential previous moved satellite.
+                    if (handledSatellite_ != null && !IsPointerOverUIObject())
+                    {
+                        handledSatellite_.GetComponent<Physics>().Velocity = originalVelocity_;
+                        handledSatellite_.GetComponent<Physics>().RecalculateParticles();
+                    }
+                    GameObject movedSatellite = players_[currentPlayer_].ClosestSatellite(worldPosition);
+                    if (movedSatellite == null)
+                    { 
+                        handledSatellite_ = null;
+                    }
+                    else if (!IsPointerOverUIObject())
+                    {
+                        // Start handling the closest satellite.
+                        handledSatellite_ = movedSatellite;
+                        float dx = movedSatellite.transform.position.x - worldPosition.x;
+                        float dy = movedSatellite.transform.position.y - worldPosition.y;
+                        originalVelocity_ = handledSatellite_.GetComponent<Physics>().Velocity;
+                        handledSatellite_.GetComponent<Physics>().Velocity = originalVelocity_ + new Vector2(dx, dy) * 0.1f;
+                        handledSatellite_.GetComponent<Physics>().RecalculateParticles();
+                        ShowButton(ButtonNext);
+                        givingImpulse_ = true;
+                    }
+                }
+                if (handledSatellite_ != null && mouseDown_ && givingImpulse_)
+                {
+                    float dx = handledSatellite_.transform.position.x - worldPosition.x;
+                    float dy = handledSatellite_.transform.position.y - worldPosition.y;
 
-            satelliteGhost_.GetComponent<Physics>().Velocity = new Vector2(dx, dy);
-            satelliteGhost_.GetComponent<Physics>().RecalculateParticles();
+                    handledSatellite_.GetComponent<Physics>().Velocity = originalVelocity_ + new Vector2(dx, dy) * 0.1f;
+                    handledSatellite_.GetComponent<Physics>().RecalculateParticles();
+                }
+                break;
+            default:
+                break;
         }
+
         mouseDown_ = true;
     }
 
@@ -236,6 +351,7 @@ public class Game : MonoBehaviour
             {
                 mouseDown_ = false;
                 placingSatellite_ = true;
+                givingImpulse_ = false;
             }
         }
         else
