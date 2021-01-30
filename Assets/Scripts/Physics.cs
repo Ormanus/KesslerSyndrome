@@ -9,23 +9,23 @@ public class Physics : MonoBehaviour
 {
     public Vector2 Velocity;
     public Transform SimulationParticle;
-    private GameObject earth;
-    private Rigidbody2D rb;
-    private bool started = false;
+    private GameObject earth_;
+    private Rigidbody2D rb_;
+    private bool started_ = false;
     const double GM = 1.2; // Gravity constant * mass of earth
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.velocity = Velocity;
-        earth = GameObject.Find("Earth");
-        started = true;
+        rb_ = GetComponent<Rigidbody2D>();
+        rb_.velocity = Velocity;
+        earth_ = GameObject.Find("Earth");
+        started_ = true;
     }
 
     private Vector2 CalculateMovement(Vector3 pos)
     {
-        double dx = earth.transform.position.x - pos.x;
-        double dy = earth.transform.position.y - pos.y;
+        double dx = earth_.transform.position.x - pos.x;
+        double dy = earth_.transform.position.y - pos.y;
         double r = Math.Sqrt(dx * dx + dy * dy);
         double acceleration = GM / (r * r);
         double angle = Math.Atan2(dy, dx);
@@ -35,13 +35,13 @@ public class Physics : MonoBehaviour
     // FixedUpdate is called once per frame
     void FixedUpdate()
     {
-        if (!started)
+        if (!started_)
         {
             return;
         }
-        rb.velocity += CalculateMovement(transform.position);
+        rb_.velocity += CalculateMovement(transform.position);
         Vector3 simulatedPosition = transform.position;
-        Vector2 simulatedSpeed = rb.velocity;
+        Vector2 simulatedSpeed = rb_.velocity;
         for (int i = 0; i < 500; i++)
         {
             simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
