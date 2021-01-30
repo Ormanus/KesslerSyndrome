@@ -12,7 +12,7 @@ public class Satellite : MonoBehaviour
     public List<AudioClip> collisionClips;
     public List<AudioClip> explosionClips;
 
-    public int armor = 3;
+    public int armor = 1;
     public int comms = 1;
     public float thrust = 1f;
 

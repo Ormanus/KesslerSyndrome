@@ -45,7 +45,7 @@ public class Player
             {
                 if (Mathf.Abs(city.Angle - angle0) < 0.1f)
                 {
-                    Money += city.Population;
+                    Money += city.Population * satellite.GetComponent<Satellite>().comms;
                 }
             }
         }

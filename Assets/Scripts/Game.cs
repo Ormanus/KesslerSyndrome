@@ -340,23 +340,17 @@ public class Game : MonoBehaviour
                     else if (!IsPointerOverUIObject())
                     {
                         // Start handling the closest satellite.
+                        originalVelocity_ = movedSatellite.GetComponent<Physics>().Velocity;
                         handledSatellite_ = movedSatellite;
-                        float dx = movedSatellite.transform.position.x - worldPosition.x;
-                        float dy = movedSatellite.transform.position.y - worldPosition.y;
-                        originalVelocity_ = handledSatellite_.GetComponent<Physics>().Velocity;
-                        handledSatellite_.GetComponent<Physics>().Velocity = originalVelocity_ + new Vector2(dx, dy) * 0.1f;
-                        handledSatellite_.GetComponent<Physics>().RecalculateParticles();
+                        handledSatellite_.GetComponent<Physics>().GiveImpulse(worldPosition, originalVelocity_);
+
                         ShowButton(ButtonNext);
                         givingImpulse_ = true;
                     }
                 }
                 if (handledSatellite_ != null && mouseDown_ && givingImpulse_)
                 {
-                    float dx = handledSatellite_.transform.position.x - worldPosition.x;
-                    float dy = handledSatellite_.transform.position.y - worldPosition.y;
-
-                    handledSatellite_.GetComponent<Physics>().Velocity = originalVelocity_ + new Vector2(dx, dy) * 0.1f;
-                    handledSatellite_.GetComponent<Physics>().RecalculateParticles();
+                    handledSatellite_.GetComponent<Physics>().GiveImpulse(worldPosition, originalVelocity_);
                 }
                 break;
             default:

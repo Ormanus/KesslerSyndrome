@@ -103,6 +103,22 @@ public class Physics : MonoBehaviour
         }
     }
 
+    public void GiveImpulse(Vector2 origin, Vector2 originalVelocity)
+    {
+        float maxImpulse = GetComponent<Satellite>().thrust * GetComponent<Satellite>().thrust;
+        float dx = transform.position.x - origin.x;
+        float dy = transform.position.y - origin.y;
+        Vector2 impulse = new Vector2(dx, dy) * 0.2f;
+
+        if (impulse.magnitude > maxImpulse)
+        {
+            impulse = impulse.normalized * maxImpulse;
+        }
+         
+        Velocity = originalVelocity + impulse;
+        RecalculateParticles();
+    }
+
     private void OnDestroy()
     {
         RemoveParticles();
