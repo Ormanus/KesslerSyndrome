@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class Physics : MonoBehaviour
 {
     public Vector2 Velocity;
     public Transform SimulationParticle;
+
     private GameObject earth_;
     private Rigidbody2D rb_;
     private bool placed_ = false;

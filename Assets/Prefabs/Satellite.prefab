@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 1266558302248063757}
   - component: {fileID: -5951792414780146491}
   - component: {fileID: 2259124815853929850}
+  - component: {fileID: 5806802905026541367}
   m_Layer: 0
   m_Name: Satellite
   m_TagString: Untagged
@@ -168,3 +169,22 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.5, y: 0.12}
   m_Direction: 1
+--- !u!114 &5806802905026541367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8910427446607544044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb6ec245b18bb84baea1a2c60b4567f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShrapnelPrefabs:
+  - {fileID: 8910427446607544044, guid: baa05a15fcca3be4ba3903c435853357, type: 3}
+  - {fileID: 8910427446607544044, guid: 6695e456983abfb4490ddd65f090eef3, type: 3}
+  - {fileID: 8910427446607544044, guid: 489eac1ca50addc429742d95188f7d55, type: 3}
+  - {fileID: 8910427446607544044, guid: 478872a4c636ca7488c39aea410a88e8, type: 3}
+  ExplosionPrefab: {fileID: 8910427446607544044, guid: e182dc43af081734ebb03a890059a043,
+    type: 3}

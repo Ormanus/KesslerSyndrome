@@ -54,7 +54,10 @@ public class Game : MonoBehaviour
         players_.Add(new Player("Sprinkler 777777777777", Color.green, moneyDisplays[1]));
         players_.Add(new Player("Fudge Eynah", Color.blue, moneyDisplays[2]));
         CreateSatellite(new Vector3(7.0f, 1.0f, 0.0f), new Vector2(0.0f, -5.0f), players_[0]);
-        CreateSatellite(new Vector3(8.0f, -2.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
+        CreateSatellite(new Vector3(10.0f, 3.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
+
+        CreateSatellite(new Vector3(8.0f, 1.0f, 0.0f), new Vector2(0.0f, 5.0f), players_[1]);
+        CreateSatellite(new Vector3(8.0f, -1.0f, 0.0f), new Vector2(0.0f, -5.0f), players_[1]);
 
         Transform earth = GameObject.Find("Earth")?.transform;
         if (earth == null)
