@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class Game : MonoBehaviour
 {
@@ -12,11 +14,15 @@ public class Game : MonoBehaviour
     public Canvas ScoreCanvas;
     public Text InfoText;
     public Button ButtonNext;
+    public Button ButtonCreate;
     public Text[] moneyDisplays;
 
     private List<Player> players_;
     private int currentPlayer_;
     private int satelliteTimer;
+    private bool placingSatellite_ = false;
+    private GameObject satelliteGhost_ = null;
+
     const int SATELLITE_TIMER_LENGTH = 200; //4 seconds;
     const float EARTH_RADIUS = 4.9f;
 
@@ -27,13 +33,14 @@ public class Game : MonoBehaviour
         set { paused_ = value; }
     }
 
-    private void CreateSatellite(Vector3 position, Vector2 velocity, Player player)
+    private GameObject CreateSatellite(Vector3 position, Vector2 velocity, Player player)
     {
         GameObject satellite = Instantiate(SatellitePrefab, position, Quaternion.identity);
         Rigidbody2D rb = satellite.GetComponent<Rigidbody2D>();
         satellite.GetComponent<Physics>().Velocity = velocity;
         satellite.GetComponentInChildren<SpriteRenderer>().color = player.PlayerColor;
         player.AddSatellite(satellite);
+        return satellite;
     }
 
     private void CreateCity(Vector2 pos, int pop)
@@ -53,8 +60,6 @@ public class Game : MonoBehaviour
         players_.Add(new Player("Ice Wallowcome", Color.red, moneyDisplays[0]));
         players_.Add(new Player("Sprinkler 777777777777", Color.green, moneyDisplays[1]));
         players_.Add(new Player("Fudge Eynah", Color.blue, moneyDisplays[2]));
-        CreateSatellite(new Vector3(7.0f, 1.0f, 0.0f), new Vector2(0.0f, -5.0f), players_[0]);
-        CreateSatellite(new Vector3(8.0f, -2.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
 
         Transform earth = GameObject.Find("Earth")?.transform;
         if (earth == null)
@@ -69,12 +74,30 @@ public class Game : MonoBehaviour
         }
 
         ButtonNext.onClick.AddListener(TaskNext);
+        ButtonCreate.onClick.AddListener(TaskCreate);
         Pause();
     }
 
     private void TaskNext()
     {
-        paused_ = false;
+        Paused = false;
+    }
+
+    private void TaskCreate()
+    {
+        if (!Paused)
+        {
+
+        }
+        else if (satelliteGhost_ != null)
+        {
+            satelliteGhost_.GetComponent<Physics>().Velocity = new Vector3();
+        }
+        else
+        {
+            placingSatellite_ = true;
+            satelliteGhost_ = CreateSatellite(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f), players_[currentPlayer_]);
+        }
     }
 
     private void Pause()
@@ -86,16 +109,54 @@ public class Game : MonoBehaviour
         {
             currentPlayer_ -= players_.Count;
         }
-
+        placingSatellite_ = false;
+        satelliteGhost_ = null;
         InfoText.text = players_[currentPlayer_].Name + "'s turn!";
     }
+
+    private bool mouseDown_ = false;
+
+    void mouseClicked()
+    {
+        if (satelliteGhost_ != null && !mouseDown_)
+        {
+
+            if (EventSystem.current.currentSelectedGameObject == null)
+            {
+                Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+                satelliteGhost_.transform.position = new Vector3(worldPosition.x, worldPosition.y, 0.0f);
+                placingSatellite_ = false;
+                satelliteGhost_.GetComponent<Physics>().Placed = true;
+            }
+        }
+        if (satelliteGhost_ != null && mouseDown_ && !placingSatellite_)
+        {
+            Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+            float dx = satelliteGhost_.transform.position.x - worldPosition.x;
+            float dy = satelliteGhost_.transform.position.y - worldPosition.y;
+
+            satelliteGhost_.GetComponent<Physics>().Velocity = new Vector2(dx, dy);
+        }
+        mouseDown_ = true;
+    }
+
 
     // Update is called once per frame
     void FixedUpdate()
     {
         if (Paused)
         {
-            
+            if (Input.GetMouseButton(0))
+            {
+                mouseClicked();
+            }
+            else
+            {
+                mouseDown_ = false;
+                placingSatellite_ = true;
+            }
         }
         else
         {
@@ -109,6 +170,7 @@ public class Game : MonoBehaviour
                 player.MonetizeSatellites();
             }
             satelliteTimer++;
+
         }
     }
 }

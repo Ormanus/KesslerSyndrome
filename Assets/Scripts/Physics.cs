@@ -12,6 +12,11 @@ public class Physics : MonoBehaviour
     private GameObject earth_;
     private Rigidbody2D rb_;
     private bool placed_ = false;
+    public bool Placed
+    {
+        get { return placed_; }
+        set { placed_ = value; }
+    }
     const double GM = 4.0; // Gravity constant * mass of earth
     // Start is called before the first frame update
     void Start()
@@ -36,10 +41,16 @@ public class Physics : MonoBehaviour
     {
         if (Game.Paused)
         {
+            if (!Placed)
+            {
+                Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+                transform.position = new Vector3(worldPosition.x, worldPosition.y, 0.0f);
+            }
             rb_.velocity = new Vector3(0.0f, 0.0f, 0.0f);
             Vector3 simulatedPosition = transform.position;
             Vector2 simulatedSpeed = Velocity;
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 200; i++)
             {
                 simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
                 simulatedSpeed += CalculateMovement(simulatedPosition);
