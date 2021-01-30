@@ -9,6 +9,11 @@ public class Physics : MonoBehaviour
     private GameObject earth_;
     private Rigidbody2D rb_;
     private bool placed_ = false;
+    public bool Placed
+    {
+        get { return placed_; }
+        set { placed_ = value; }
+    }
     const double GM = 4.0; // Gravity constant * mass of earth
     Transform[] simulationParticles = null;
 
@@ -35,48 +40,27 @@ public class Physics : MonoBehaviour
     {
         if (Game.Paused)
         {
+            if (!Placed)
+            {
+                Vector2 screenPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                Vector2 worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+                transform.position = new Vector3(worldPosition.x, worldPosition.y, 0.0f);
+            }
             if (simulationParticles == null)
             {
-                simulationParticles = new Transform[25];
-                rb_.velocity = new Vector3(0.0f, 0.0f, 0.0f);
-                Vector3 simulatedPosition = transform.position;
-                Vector2 simulatedSpeed = Velocity;
-                int index = 0;
-                for (int i = 0; i < 500; i++)
-                {
-                    simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
-                    simulatedSpeed += CalculateMovement(simulatedPosition);
-                    if (i % 20 == 0)
-                    {
-                        simulationParticles[index++] = Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
-                    }
-                }
+                RecalculateParticles();
             }
         }
         else
         {
-            if (simulationParticles != null)
-            {
-                for (int i = 0; i < simulationParticles.Length; i++)
-                {
-                    if (simulationParticles[i] == null)
-                    {
-                        Debug.LogWarning(i);
-                        continue;
-                    }
-                    Destroy(simulationParticles[i].gameObject);
-                }
 
-                simulationParticles = null;
-            }
 
             rb_.velocity = Velocity + CalculateMovement(transform.position);
             Velocity = rb_.velocity;
         }
-
     }
 
-    private void OnDestroy()
+    void RemoveParticles()
     {
         if (simulationParticles != null)
         {
@@ -84,6 +68,7 @@ public class Physics : MonoBehaviour
             {
                 if (simulationParticles[i] == null)
                 {
+                    Debug.LogWarning(i);
                     continue;
                 }
                 Destroy(simulationParticles[i].gameObject);
@@ -91,5 +76,30 @@ public class Physics : MonoBehaviour
 
             simulationParticles = null;
         }
+    }
+
+    public void RecalculateParticles()
+    {
+        RemoveParticles();
+
+        simulationParticles = new Transform[25];
+        rb_.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 simulatedPosition = transform.position;
+        Vector2 simulatedSpeed = Velocity;
+        int index = 0;
+        for (int i = 0; i < 500; i++)
+        {
+            simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
+            simulatedSpeed += CalculateMovement(simulatedPosition);
+            if (i % 20 == 0)
+            {
+                simulationParticles[index++] = Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        RemoveParticles();
     }
 }
