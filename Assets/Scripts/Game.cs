@@ -18,6 +18,7 @@ public class Game : MonoBehaviour
     public Button ButtonCancelCreate;
     public Button ButtonMove;
     public Button ButtonCancelMove;
+    public Button ButtonUpgrade;
     public Text[] moneyDisplays;
 
     private List<Player> players_;
@@ -29,11 +30,22 @@ public class Game : MonoBehaviour
     const int SATELLITE_TIMER_LENGTH = 200; //4 seconds;
     const float EARTH_RADIUS = 4.9f;
 
+    public static Game Instance;
+
     private static bool paused_;
     public static bool Paused
     {
         get { return paused_; }
         set { paused_ = value; }
+    }
+    public static Player CurrentPlayer
+    {
+        get
+        {
+            if (Instance == null || Instance.currentPlayer_ == -1)
+                return null;
+            return Instance.players_[Instance.currentPlayer_];
+        }
     }
 
     private enum ActionType
@@ -51,6 +63,10 @@ public class Game : MonoBehaviour
         satellite.GetComponent<Physics>().Velocity = velocity;
         satellite.GetComponentInChildren<SpriteRenderer>().color = player.PlayerColor;
         satellite.GetComponent<Physics>().Placed = true;
+        var sat = satellite.GetComponent<Satellite>();
+        sat.thrust = player.thrust * 0.5f;
+        sat.comms = player.comms;
+        sat.armor = player.armor;
         player.AddSatellite(satellite);
         return satellite;
     }
@@ -62,6 +78,12 @@ public class Game : MonoBehaviour
         obj.GetComponent<City>().Population = pop;
     }
 
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -69,9 +91,9 @@ public class Game : MonoBehaviour
         satelliteTimer = 0;
         currentPlayer_ = -1;
         players_ = new List<Player>();
-        players_.Add(new Player("Ice Wallowcome", Color.red, moneyDisplays[0]));
-        players_.Add(new Player("Sprinkler 777777777777", Color.green, moneyDisplays[1]));
-        players_.Add(new Player("Fudge Eynah", Color.blue, moneyDisplays[2]));
+        players_.Add(new Player("Player 1", Color.red, moneyDisplays[0]));
+        players_.Add(new Player("Player 2", Color.green, moneyDisplays[1]));
+        players_.Add(new Player("Player 3", Color.blue, moneyDisplays[2]));
 
         CreateSatellite(new Vector3(7.0f, 3.0f, 0.0f), new Vector2(0.0f, 5.0f), players_[0]);
         CreateSatellite(new Vector3(10.0f, 3.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
@@ -119,6 +141,7 @@ public class Game : MonoBehaviour
         HideButton(ButtonNext);
         HideButton(ButtonCancelCreate);
         HideButton(ButtonCancelMove);
+        HideButton(ButtonUpgrade);
     }
 
     private void TaskCreate()
@@ -142,6 +165,7 @@ public class Game : MonoBehaviour
             HideButton(ButtonNext);
             HideButton(ButtonCreate);
             HideButton(ButtonMove);
+            HideButton(ButtonUpgrade);
             currentAction = ActionType.CreateSatellite;
         }
     }
@@ -165,6 +189,7 @@ public class Game : MonoBehaviour
             ShowButton(ButtonNext);
             ShowButton(ButtonCreate);
             ShowButton(ButtonMove);
+            ShowButton(ButtonUpgrade);
             HideButton(ButtonCancelCreate);
             HideButton(ButtonCancelMove);
             currentAction = ActionType.None;
@@ -188,6 +213,7 @@ public class Game : MonoBehaviour
             HideButton(ButtonNext);
             HideButton(ButtonCreate);
             HideButton(ButtonMove);
+            HideButton(ButtonUpgrade);
             currentAction = ActionType.MoveSatellite;
         }
     }
@@ -209,6 +235,7 @@ public class Game : MonoBehaviour
             ShowButton(ButtonNext);
             ShowButton(ButtonCreate);
             ShowButton(ButtonMove);
+            ShowButton(ButtonUpgrade);
             HideButton(ButtonCancelMove);
             currentAction = ActionType.None;
         }
@@ -240,6 +267,7 @@ public class Game : MonoBehaviour
         handledSatellite_ = null;
         ShowButton(ButtonNext);
         ShowButton(ButtonCreate);
+        ShowButton(ButtonUpgrade);
         HideButton(ButtonCancelCreate);
         ShowButton(ButtonMove);
         HideButton(ButtonCancelMove);
