@@ -53,7 +53,7 @@ public class CameraControl : MonoBehaviour
         //}
 
 
-        if (Input.GetMouseButton(0) && !isOverUI())
+        if (Input.GetMouseButton(0) && !isOverUI() && Game.Instance.currentAction == Game.ActionType.None)
         {
 
             if (!down)
