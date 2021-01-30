@@ -9,13 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1873266683670216666}
-  - component: {fileID: 5875921656008478929}
   - component: {fileID: 1266558302248063757}
   - component: {fileID: 3263371309698017959}
   - component: {fileID: -5951792414780146491}
   - component: {fileID: 2431282119371324706}
+  - component: {fileID: -3838666184448792415}
   m_Layer: 6
-  m_Name: Shrapnel 0
+  m_Name: Shrapnel 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,20 +35,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5875921656008478929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8910427446607544044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc2558f0e200a974eb7689b9b603e7a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ExplosionPrefab: {fileID: 8910427446607544044, guid: e182dc43af081734ebb03a890059a043,
-    type: 3}
 --- !u!114 &1266558302248063757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,7 +90,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -7352648317119044060, guid: fe16cc18304db2a40871b9b9619a76fd,
+  m_Sprite: {fileID: 8504968441125950615, guid: fe16cc18304db2a40871b9b9619a76fd,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -152,4 +138,18 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.96
+  m_Radius: 0.75
+--- !u!114 &-3838666184448792415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8910427446607544044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc2558f0e200a974eb7689b9b603e7a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ExplosionPrefab: {fileID: 8910427446607544044, guid: e182dc43af081734ebb03a890059a043,
+    type: 3}

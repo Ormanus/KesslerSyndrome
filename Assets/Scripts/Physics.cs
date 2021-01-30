@@ -10,6 +10,8 @@ public class Physics : MonoBehaviour
     private Rigidbody2D rb_;
     private bool placed_ = false;
     const double GM = 4.0; // Gravity constant * mass of earth
+    Transform[] simulationParticles = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,24 +35,61 @@ public class Physics : MonoBehaviour
     {
         if (Game.Paused)
         {
-            rb_.velocity = new Vector3(0.0f, 0.0f, 0.0f);
-            Vector3 simulatedPosition = transform.position;
-            Vector2 simulatedSpeed = Velocity;
-            for (int i = 0; i < 500; i++)
+            if (simulationParticles == null)
             {
-                simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
-                simulatedSpeed += CalculateMovement(simulatedPosition);
-                if (i % 20 == 0)
+                simulationParticles = new Transform[25];
+                rb_.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+                Vector3 simulatedPosition = transform.position;
+                Vector2 simulatedSpeed = Velocity;
+                int index = 0;
+                for (int i = 0; i < 500; i++)
                 {
-                    Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
+                    simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
+                    simulatedSpeed += CalculateMovement(simulatedPosition);
+                    if (i % 20 == 0)
+                    {
+                        simulationParticles[index++] = Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
+                    }
                 }
             }
         }
         else
         {
+            if (simulationParticles != null)
+            {
+                for (int i = 0; i < simulationParticles.Length; i++)
+                {
+                    if (simulationParticles[i] == null)
+                    {
+                        Debug.LogWarning(i);
+                        continue;
+                    }
+                    Destroy(simulationParticles[i].gameObject);
+                }
+
+                simulationParticles = null;
+            }
+
             rb_.velocity = Velocity + CalculateMovement(transform.position);
             Velocity = rb_.velocity;
         }
 
+    }
+
+    private void OnDestroy()
+    {
+        if (simulationParticles != null)
+        {
+            for (int i = 0; i < simulationParticles.Length; i++)
+            {
+                if (simulationParticles[i] == null)
+                {
+                    continue;
+                }
+                Destroy(simulationParticles[i].gameObject);
+            }
+
+            simulationParticles = null;
+        }
     }
 }

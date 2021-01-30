@@ -53,11 +53,13 @@ public class Game : MonoBehaviour
         players_.Add(new Player("Ice Wallowcome", Color.red, moneyDisplays[0]));
         players_.Add(new Player("Sprinkler 777777777777", Color.green, moneyDisplays[1]));
         players_.Add(new Player("Fudge Eynah", Color.blue, moneyDisplays[2]));
-        CreateSatellite(new Vector3(7.0f, 1.0f, 0.0f), new Vector2(0.0f, -5.0f), players_[0]);
+        CreateSatellite(new Vector3(7.0f, 3.0f, 0.0f), new Vector2(0.0f, 5.0f), players_[0]);
         CreateSatellite(new Vector3(10.0f, 3.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
 
-        CreateSatellite(new Vector3(8.0f, 1.0f, 0.0f), new Vector2(0.0f, 5.0f), players_[1]);
-        CreateSatellite(new Vector3(8.0f, -1.0f, 0.0f), new Vector2(0.0f, -5.0f), players_[1]);
+        for (int i = 0; i < 20; i++)
+        {
+            CreateSatellite(new Vector3(6.0f + i, 1.0f, 0.0f), new Vector2(0.0f, 5.0f - (i / 7f)) + UnityEngine.Random.insideUnitCircle * 0.5f, players_[2]);
+        }
 
         Transform earth = GameObject.Find("Earth")?.transform;
         if (earth == null)
@@ -91,6 +93,11 @@ public class Game : MonoBehaviour
         }
 
         InfoText.text = players_[currentPlayer_].Name + "'s turn!";
+    }
+
+    void Unpause()
+    {
+        InfoText.text = "";
     }
 
     // Update is called once per frame
