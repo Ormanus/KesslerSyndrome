@@ -15,6 +15,7 @@ public class Game : MonoBehaviour
     public Text InfoText;
     public Button ButtonNext;
     public Button ButtonCreate;
+    public Button ButtonCancel;
     public Text[] moneyDisplays;
 
     private List<Player> players_;
@@ -75,6 +76,8 @@ public class Game : MonoBehaviour
 
         ButtonNext.onClick.AddListener(TaskNext);
         ButtonCreate.onClick.AddListener(TaskCreate);
+        ButtonCancel.onClick.AddListener(TaskCancel);
+        HideButton(ButtonCancel);
         Pause();
     }
 
@@ -82,9 +85,15 @@ public class Game : MonoBehaviour
     {
         Paused = false;
 
-        satelliteGhost_.GetComponent<CapsuleCollider2D>().isTrigger = false;
+        if (satelliteGhost_ != null)
+        {
+            satelliteGhost_.GetComponent<CapsuleCollider2D>().isTrigger = false;
+            satelliteGhost_ = null;
+        }
         placingSatellite_ = false;
-        satelliteGhost_ = null;
+        HideButton(ButtonCreate);
+        HideButton(ButtonNext);
+        HideButton(ButtonCancel);
     }
 
     private void TaskCreate()
@@ -102,7 +111,43 @@ public class Game : MonoBehaviour
             ButtonCreate.enabled = false;
             placingSatellite_ = true;
             satelliteGhost_ = CreateSatellite(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(0.0f, 0.0f), players_[currentPlayer_]);
+            ShowButton(ButtonCancel);
+            HideButton(ButtonNext);
+            HideButton(ButtonCreate);
         }
+    }
+
+    private void TaskCancel()
+    {
+        if (!Paused)
+        {
+
+        }
+        else
+        {
+            ButtonCreate.enabled = true;
+            placingSatellite_ = false;
+            if (satelliteGhost_ != null)
+            {
+                players_[currentPlayer_].RemoveSatellite(satelliteGhost_);
+                Destroy(satelliteGhost_);
+                satelliteGhost_ = null;
+            }
+            ShowButton(ButtonNext);
+            ShowButton(ButtonCreate);
+            HideButton(ButtonCancel);
+        }
+    }
+
+    private void ShowButton(Button button)
+    {
+        button.gameObject.SetActive(true);
+    }
+
+    private void HideButton(Button button)
+    {
+
+        button.gameObject.SetActive(false);
     }
 
     private void Pause()
@@ -116,6 +161,11 @@ public class Game : MonoBehaviour
         }
         InfoText.text = players_[currentPlayer_].Name + "'s turn!";
         ButtonCreate.enabled = true;
+        placingSatellite_ = false;
+        satelliteGhost_ = null;
+        ShowButton(ButtonNext);
+        ShowButton(ButtonCreate);
+        HideButton(ButtonCancel);
     }
 
     private bool mouseDown_ = false;
@@ -141,6 +191,7 @@ public class Game : MonoBehaviour
                 satelliteGhost_.transform.position = new Vector3(worldPosition.x, worldPosition.y, 0.0f);
                 placingSatellite_ = false;
                 satelliteGhost_.GetComponent<Physics>().Placed = true;
+                ShowButton(ButtonNext);
             }
         }
         if (satelliteGhost_ != null && mouseDown_ && !placingSatellite_)

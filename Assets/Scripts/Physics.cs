@@ -51,7 +51,7 @@ public class Physics : MonoBehaviour
             {
                 simulatedPosition += new Vector3(simulatedSpeed.x, simulatedSpeed.y, 0.0f) * 0.02f;
                 simulatedSpeed += CalculateMovement(simulatedPosition);
-                if (i % 20 == 0)
+                if (i % 10 == 0)
                 {
                     Instantiate(SimulationParticle, simulatedPosition, Quaternion.identity);
                 }
