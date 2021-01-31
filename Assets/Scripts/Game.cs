@@ -78,11 +78,18 @@ public class Game : MonoBehaviour
         obj.GetComponent<City>().Population = pop;
     }
 
-
     private void Awake()
     {
         Instance = this;
     }
+
+    Color[] playerColors =
+    {
+        Color.red,
+        Color.green,
+        Color.blue,
+        Color.yellow,
+    };
 
     // Start is called before the first frame update
     void Start()
@@ -91,17 +98,27 @@ public class Game : MonoBehaviour
         satelliteTimer = 0;
         currentPlayer_ = -1;
         players_ = new List<Player>();
-        players_.Add(new Player("Player 1", Color.red, moneyDisplays[0]));
-        players_.Add(new Player("Player 2", Color.green, moneyDisplays[1]));
-        players_.Add(new Player("Player 3", Color.blue, moneyDisplays[2]));
 
-        CreateSatellite(new Vector3(7.0f, 3.0f, 0.0f), new Vector2(0.0f, 5.0f), players_[0]);
-        CreateSatellite(new Vector3(10.0f, 3.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
-
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < StartSettings.numPlayers; i++)
         {
-            CreateSatellite(new Vector3(6.0f + i, 1.0f, 0.0f), new Vector2(0.0f, 5.0f - (i / 7f)) + UnityEngine.Random.insideUnitCircle * 0.5f, players_[2]);
+            players_.Add(new Player(StartSettings.names[i], playerColors[i], moneyDisplays[i]));
         }
+
+        for (int i = 0; i < moneyDisplays.Length; i++)
+        {
+            moneyDisplays[i].gameObject.SetActive(i < StartSettings.numPlayers);
+        }
+
+
+        // Enable for debugging
+
+        //CreateSatellite(new Vector3(7.0f, 3.0f, 0.0f), new Vector2(0.0f, 5.0f), players_[0]);
+        //CreateSatellite(new Vector3(10.0f, 3.0f, 0.0f), new Vector2(1.0f, 5.0f), players_[1]);
+
+        //for (int i = 0; i < 20; i++)
+        //{
+        //    CreateSatellite(new Vector3(6.0f + i, 1.0f, 0.0f), new Vector2(0.0f, 5.0f - (i / 7f)) + UnityEngine.Random.insideUnitCircle * 0.5f, players_[2]);
+        //}
 
         Transform earth = GameObject.Find("Earth")?.transform;
         if (earth == null)

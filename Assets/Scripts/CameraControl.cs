@@ -28,6 +28,8 @@ public class CameraControl : MonoBehaviour
 #if UNITY_ANDROID
         
 #else
+        // TODO if there's time: Zoom by pinching
+
         //if (isOverUI())
         //{
         //    if (Input.touchCount == 1)

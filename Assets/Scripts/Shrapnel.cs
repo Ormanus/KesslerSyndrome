@@ -9,7 +9,7 @@ public class Shrapnel : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         var obj = Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
-        obj.transform.localScale *= 0.5f;
+        obj.transform.localScale *= 0.3f;
         Destroy(gameObject);
     }
 }

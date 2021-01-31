@@ -16,6 +16,8 @@ public class Satellite : MonoBehaviour
     public int comms = 1;
     public float thrust = 1f;
 
+    bool destroyed = false;
+
     void Start()
     {
         audioSource_ = GetComponent<AudioSource>();
@@ -24,28 +26,26 @@ public class Satellite : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         armor--;
-        if (armor <= 0)
+        if (armor <= 0 && !destroyed)
         {
-            if (GetInstanceID() > collision.transform.GetInstanceID())
+            destroyed = true;
+            int nr = Random.Range(4, 6);
+            for (int i = 0; i < nr; i++)
             {
-                int nr = Random.Range(2, 5) + 10;
+                int tr = Random.Range(0, ShrapnelPrefabs.Length);
+                var obj = Instantiate(ShrapnelPrefabs[tr], transform.position, Quaternion.identity);
+                obj.GetComponent<Physics>().Velocity = GetComponent<Physics>().Velocity + Random.insideUnitCircle * 2.0f;
+            }
+
+            Physics other = collision.transform.GetComponent<Physics>();
+            if (other)
+            {
+                nr = Random.Range(4, 6);
                 for (int i = 0; i < nr; i++)
                 {
                     int tr = Random.Range(0, ShrapnelPrefabs.Length);
                     var obj = Instantiate(ShrapnelPrefabs[tr], transform.position, Quaternion.identity);
-                    obj.GetComponent<Physics>().Velocity = GetComponent<Physics>().Velocity + Random.insideUnitCircle * 2.0f;
-                }
-
-                Physics other = collision.transform.GetComponent<Physics>();
-                if (other)
-                {
-                    nr = Random.Range(2, 5) + 10;
-                    for (int i = 0; i < nr; i++)
-                    {
-                        int tr = Random.Range(0, ShrapnelPrefabs.Length);
-                        var obj = Instantiate(ShrapnelPrefabs[tr], transform.position, Quaternion.identity);
-                        obj.GetComponent<Physics>().Velocity = other.Velocity + Random.insideUnitCircle * 2.0f;
-                    }
+                    obj.GetComponent<Physics>().Velocity = other.Velocity + Random.insideUnitCircle * 2.0f;
                 }
             }
             Instantiate(ExplosionPrefab, transform.position, Quaternion.identity);
