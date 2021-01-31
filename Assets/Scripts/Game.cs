@@ -1,4 +1,4 @@
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -58,6 +58,8 @@ public class Game : MonoBehaviour
         MoveSatellite
     }
     public ActionType currentAction = ActionType.None;
+
+    List<GameObject> rockets_ = new List<GameObject>();
 
     private GameObject CreateSatellite(Vector3 position, Vector2 velocity, Player player)
     {
@@ -149,13 +151,24 @@ public class Game : MonoBehaviour
     {
         Paused = false;
 
+        foreach (GameObject rocket in rockets_)
+        {
+            rocket.GetComponent<Rocket>().HandleTurn();
+        }
+
         if (handledSatellite_ != null)
         {
-            handledSatellite_.GetComponent<CapsuleCollider2D>().isTrigger = false;
+            GameObject rocket = handledSatellite_.GetComponent<Physics>().SpawnRocket(EARTH_RADIUS, players_.Count - 1, CurrentPlayer);
+            rockets_.Add(rocket);
+            players_[currentPlayer_].RemoveSatellite(handledSatellite_);
+            Destroy(handledSatellite_);
             handledSatellite_ = null;
         }
+
         placingSatellite_ = false;
         currentAction = ActionType.None;
+
+
         HideButton(ButtonCreate);
         HideButton(ButtonMove);
         HideButton(ButtonNext);
@@ -298,6 +311,26 @@ public class Game : MonoBehaviour
         if (currentPlayer_ >= players_.Count)
         {
             currentPlayer_ -= players_.Count;
+        }
+        for (int i = 0; i < rockets_.Count; i++)
+        {
+            GameObject rocket = rockets_[i];
+            if (rocket.GetComponent<Rigidbody2D>().velocity.magnitude > 0)
+            {
+                Vector3 dest = rocket.GetComponent<Rocket>().dest;
+                Vector2 destVelocity = rocket.GetComponent<Rocket>().destVelocity;
+                Player player = rocket.GetComponent<Rocket>().player;
+                float delta = (rocket.transform.position - dest).magnitude;
+
+                rockets_.Remove(rocket);
+                Destroy(rocket);
+                i--;
+
+                if (delta < 1)
+                {
+                    CreateSatellite(dest, destVelocity, player);
+                }
+            }
         }
         InfoText.text = players_[currentPlayer_].Name + "'s turn!";
         ButtonCreate.enabled = true;
