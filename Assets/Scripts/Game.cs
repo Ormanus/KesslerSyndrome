@@ -158,10 +158,14 @@ public class Game : MonoBehaviour
 
         if (handledSatellite_ != null)
         {
-            GameObject rocket = handledSatellite_.GetComponent<Physics>().SpawnRocket(EARTH_RADIUS, players_.Count - 1, CurrentPlayer);
-            rockets_.Add(rocket);
-            players_[currentPlayer_].RemoveSatellite(handledSatellite_);
-            Destroy(handledSatellite_);
+            if (currentAction == ActionType.CreateSatellite)
+            {
+                GameObject rocket = handledSatellite_.GetComponent<Physics>().SpawnRocket(EARTH_RADIUS, players_.Count - 1, CurrentPlayer);
+                rockets_.Add(rocket);
+                players_[currentPlayer_].RemoveSatellite(handledSatellite_);
+                Destroy(handledSatellite_);
+            }
+
             handledSatellite_ = null;
         }
 
