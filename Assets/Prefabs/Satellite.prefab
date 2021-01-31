@@ -133,6 +133,8 @@ MonoBehaviour:
   Velocity: {x: 0, y: 0}
   SimulationParticle: {fileID: 8703436863689963136, guid: c01f01e27a3f1f64083a164c7b4cd50b,
     type: 3}
+  RocketPrefab: {fileID: 1656201446864904663, guid: 6fa597999a8ca6c479114e15031719a4,
+    type: 3}
 --- !u!50 &-5951792414780146491
 Rigidbody2D:
   serializedVersion: 4
@@ -191,7 +193,7 @@ MonoBehaviour:
   - {fileID: 8910427446607544044, guid: 9ef6ac4c2d73a984c8d10f3e24660fa4, type: 3}
   ExplosionPrefab: {fileID: 8910427446607544044, guid: e182dc43af081734ebb03a890059a043,
     type: 3}
-  audioSource: {fileID: 0}
+  audioSource_: {fileID: 0}
   collisionClips:
   - {fileID: 8300000, guid: 91e14bfe3888a9d42a7debd7d79c8449, type: 3}
   - {fileID: 8300000, guid: b0467e99e5629304db168a1a9b7b4045, type: 3}

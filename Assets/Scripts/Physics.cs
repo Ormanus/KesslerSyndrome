@@ -9,6 +9,7 @@ public class Physics : MonoBehaviour
     private GameObject earth_;
     private Rigidbody2D rb_;
     public bool Placed { get; set; } = true;
+    public GameObject RocketPrefab;
     const double GM = 4.0; // Gravity constant * mass of earth
     Transform[] simulationParticles = null;
 
@@ -118,6 +119,21 @@ public class Physics : MonoBehaviour
         Velocity = originalVelocity + impulse;
         RecalculateParticles();
     }
+
+    public GameObject SpawnRocket(float radius, int turns, Player player)
+    {
+        Vector3 locationOnEarth = earth_.transform.position + (transform.position - earth_.transform.position).normalized * radius;
+        float angle = Mathf.Atan2(transform.position.y - earth_.transform.position.y, transform.position.x - earth_.transform.position.x);
+        GameObject rocket = Instantiate(RocketPrefab, locationOnEarth, Quaternion.identity);
+        rocket.transform.localEulerAngles = new Vector3(0f, 0f, angle * Mathf.Rad2Deg - 90f);
+        rocket.GetComponent<Rocket>().dest = transform.position;
+        rocket.GetComponent<Rocket>().turns = turns;
+        rocket.GetComponent<Rocket>().destVelocity = Velocity;
+        rocket.GetComponent<Rocket>().player = player;
+
+        return rocket;
+    }
+
 
     private void OnDestroy()
     {
