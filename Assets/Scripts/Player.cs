@@ -32,7 +32,7 @@ public class Player
         return satellites_.Count;
     }
 
-    const int START_MONEY = 420000;
+    const int START_MONEY = 10000;
 
     public void MonetizeSatellites()
     {

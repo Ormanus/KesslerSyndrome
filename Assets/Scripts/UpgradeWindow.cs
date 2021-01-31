@@ -13,7 +13,7 @@ public class UpgradeWindow : MonoBehaviour
 
     Player player;
 
-    const int upgradeCostFactor = 10000;
+    const int upgradeCostFactor = 50000;
 
     void OnEnable()
     {
