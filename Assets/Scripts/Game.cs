@@ -20,14 +20,17 @@ public class Game : MonoBehaviour
     public Button ButtonCancelMove;
     public Button ButtonUpgrade;
     public Text[] moneyDisplays;
+    public Text roundDisplay;
 
     private List<Player> players_;
     private int currentPlayer_;
     private int satelliteTimer;
     private bool placingSatellite_ = false;
     private GameObject handledSatellite_ = null;
+    private int roundCount = 24;
 
     const int SATELLITE_TIMER_LENGTH = 200; //4 seconds;
+    const int FINAL_ROUND_LENGTH = 600; //12 seconds?
     const float EARTH_RADIUS = 4.9f;
 
     public static Game Instance;
@@ -129,7 +132,7 @@ public class Game : MonoBehaviour
             float r = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
             Vector3 pos = new Vector3(Mathf.Cos(r), Mathf.Sin(r));
 
-            CreateCity(earth.position + pos * EARTH_RADIUS, UnityEngine.Random.Range(1000, 50000));
+            CreateCity(earth.position + pos * EARTH_RADIUS, UnityEngine.Random.Range(10, 500));
         }
 
         ButtonNext.onClick.AddListener(TaskNext);
@@ -272,7 +275,25 @@ public class Game : MonoBehaviour
     private void Pause()
     {
         Paused = true;
+
+        if (roundCount == 0)
+        {
+            Player winner = players_[0];
+            for (int i = 1; i < players_.Count; i++)
+            {
+                if (players_[i].Money > winner.Money)
+                {
+                    winner = players_[i];
+                }
+            }
+
+            InfoText.text = winner.Name + " won!";
+            StartCoroutine(endGame());
+            return;
+        }
         satelliteTimer = 0;
+        roundCount--;
+        roundDisplay.text = "Rounds left: " + roundCount;
         currentPlayer_++;
         if (currentPlayer_ >= players_.Count)
         {
@@ -288,6 +309,13 @@ public class Game : MonoBehaviour
         HideButton(ButtonCancelCreate);
         ShowButton(ButtonMove);
         HideButton(ButtonCancelMove);
+    }
+
+    IEnumerator endGame()
+    {
+        yield return new WaitForSeconds(3f);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
     void Unpause()
@@ -395,17 +423,32 @@ public class Game : MonoBehaviour
         }
         else
         {
-            if (satelliteTimer >= SATELLITE_TIMER_LENGTH)
+            if (roundCount == 0)
             {
-                Pause();
-                return;
+                if (satelliteTimer >= FINAL_ROUND_LENGTH)
+                {
+                    Pause();
+                    return;
+                }
+                foreach (Player player in players_)
+                {
+                    player.MonetizeSatellites();
+                }
+                satelliteTimer++;
             }
-            foreach (Player player in players_)
+            else
             {
-                player.MonetizeSatellites();
+                if (satelliteTimer >= SATELLITE_TIMER_LENGTH)
+                {
+                    Pause();
+                    return;
+                }
+                foreach (Player player in players_)
+                {
+                    player.MonetizeSatellites();
+                }
+                satelliteTimer++;
             }
-            satelliteTimer++;
-
         }
     }
 }
